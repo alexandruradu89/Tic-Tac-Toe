@@ -4,6 +4,7 @@
                 new Array(3).fill()); 
 
  function createTable() {
+    resetWinnerMessage();
     if (tableNotCreated) {
         tableNotCreated = false;
         const displayTable = document.createElement("table");
@@ -13,8 +14,7 @@
             const row = document.createElement("tr");
             for (let j = 0; j < 3; ++j) {
                 const cell = document.createElement("td");
-                let cellNo = i * 10 + j;
-                cell.id = cellNo;
+                cell.id = i + "-" + j;
                 const cellText = document.createTextNode("");
                 cell.appendChild(cellText);
                 cell.setAttribute("style", "border: 1px solid black; width: 50px; height: 50px");
@@ -27,22 +27,31 @@
         displayTable.appendChild(tableBody);
         document.body.appendChild(displayTable);
     } else {
-        playerTurn = 0;
-        for (let i  = 0; i < 3; ++i) {
-            for (let j = 0; j < 3; ++j) {
-                matrix[i][j] = "";
-                let cellId = i * 10 + j;
-                let currentCell = document.getElementById(cellId.toString())
-                currentCell.textContent = "";
-            }
-        }
+        resetTable();
     }
  }
 
+ function resetTable() {
+    playerTurn = 0;
+    for (let i  = 0; i < 3; ++i) {
+        for (let j = 0; j < 3; ++j) {
+            matrix[i][j] = "";
+            let cellId = i + "-" + j;
+            let currentCell = document.getElementById(cellId)
+            currentCell.textContent = "";
+        }
+    }   
+ }
+
+ function resetWinnerMessage() {
+    const message = document.getElementById("winnerMessage");
+    message.innerHTML = "";
+ }
+
  function setValue(cell) {
-    line = parseInt(parseInt(cell.id) / 10);
+    line = parseInt(cell.id.charAt(0));
     console.log("line = " + line);
-    column = parseInt(cell.id) % 10;
+    column = parseInt(cell.id.charAt(2));
     console.log("column = " + column);
     if (!cell.textContent) {
         let symbol = playerSymbol(playerTurn);
@@ -51,7 +60,8 @@
         matrix[line][column] = cell.textContent;
         console.log(matrix);
         if (checkIfWon(symbol)) {
-            alert("Player " + symbol + " won!");
+            const message = document.getElementById("winnerMessage");
+            message.innerHTML = "Player " + symbol + " won!";
         }
     }
  }
